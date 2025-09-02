@@ -17,7 +17,7 @@ Complete step-by-step development process for the Digital Micro-Lending Manageme
 ### 1. Environment Setup
 ```bash
 # Clone repository
-git clone https://github.com/Rnilash/micro-lending-system.git
+git clone https://github.com/your-username/micro-lending-system.git
 cd micro-lending-system
 
 # Install dependencies
@@ -836,7 +836,7 @@ describe('CustomerService', () => {
 
   describe('searchCustomers', () => {
     it('should return filtered customers', async () => {
-      const query = 'kasun';
+      const query = 'john';
       const results = await customerService.searchCustomers(query);
 
       expect(results).toBeInstanceOf(Array);
@@ -890,10 +890,10 @@ describe('CustomerForm', () => {
     render(<CustomerForm onSubmit={mockOnSubmit} />);
 
     fireEvent.change(screen.getByLabelText(/first name/i), {
-      target: { value: 'Kasun' }
+      target: { value: 'John' }
     });
     fireEvent.change(screen.getByLabelText(/last name/i), {
-      target: { value: 'Perera' }
+      target: { value: 'Doe' }
     });
     
     fireEvent.click(screen.getByText(/create customer/i));
@@ -902,8 +902,8 @@ describe('CustomerForm', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
           personalInfo: expect.objectContaining({
-            firstName: 'Kasun',
-            lastName: 'Perera'
+            firstName: 'John',
+            lastName: 'Doe'
           })
         })
       );

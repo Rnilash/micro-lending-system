@@ -483,7 +483,7 @@ jobs:
 NEXT_PUBLIC_FIREBASE_API_KEY=prod_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=prod-project.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=prod-project-id
-NEXT_PUBLIC_APP_URL=https://micro-lending.vercel.app
+NEXT_PUBLIC_APP_URL=https://your-domain.com
 
 // Development Environment Variables  
 NEXT_PUBLIC_FIREBASE_API_KEY=dev_api_key

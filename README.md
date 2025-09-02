@@ -15,7 +15,7 @@ This system is designed for small-scale money lending businesses operating in Sr
 
 ```bash
 # Clone the repository
-git clone https://github.com/Rnilash/micro-lending-system.git
+git clone https://github.com/your-username/micro-lending-system.git
 cd micro-lending-system
 
 # Install dependencies
@@ -141,7 +141,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For support and questions:
 - 📧 Email: support@example.com
 - 📚 Documentation: [Full Documentation](docs/)
-- 🐛 Issues: [GitHub Issues](https://github.com/Rnilash/micro-lending-system/issues)
+- 🐛 Issues: [GitHub Issues](https://github.com/your-username/micro-lending-system/issues)
 
 ---
 

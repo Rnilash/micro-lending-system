@@ -86,8 +86,8 @@ interface User {
 ```json
 {
   "uid": "agent123",
-  "email": "nimal.silva@company.com",
-  "name": "Nimal Silva",
+  "email": "john.smith@company.com",
+  "name": "John Smith",
   "role": "agent",
   "status": "active",
   
@@ -622,14 +622,14 @@ payment.loanId = "loan789";
 ```typescript
 // Store frequently accessed data
 loan.customerInfo = {
-  name: "Kasun Perera",
+  name: "John Doe",
   phone: "+94771234567",
   address: "Colombo 03"
 };
 
 payment.loanInfo = {
   loanNumber: "LOAN001234",
-  customerName: "Kasun Perera",
+  customerName: "John Doe",
   customerPhone: "+94771234567"
 };
 ```
@@ -879,7 +879,7 @@ db.collection('payments')
 const loan = {
   customerId: 'customer123',
   customerInfo: {
-    name: 'Kasun Perera',
+    name: 'John Doe',
     phone: '+94771234567',
     address: 'Colombo 03'
   },

@@ -49,6 +49,17 @@ export interface PaginationOptions {
 // Create a new loan
 export async function createLoan(data: CreateLoanData): Promise<string> {
   try {
+    // First, get customer data to populate customer name
+    const customerRef = doc(db, 'customers', data.customerId);
+    const customerDoc = await getDoc(customerRef);
+    
+    if (!customerDoc.exists()) {
+      throw new Error('Customer not found');
+    }
+    
+    const customer = customerDoc.data();
+    const customerName = `${customer.firstName} ${customer.lastName}`;
+
     // Calculate loan details using simple flat interest method
     const weeklyInterest = data.interestRate / 100;
     const totalWithInterest = data.principalAmount * (1 + (weeklyInterest * data.duration));
@@ -63,7 +74,7 @@ export async function createLoan(data: CreateLoanData): Promise<string> {
     const loanData: Omit<Loan, 'id'> = {
       customerId: data.customerId,
       loanNumber: loanNumber,
-      customerName: '', // Will be populated later
+      customerName: customerName, // Now properly populated
       principalAmount: data.principalAmount,
       weeklyPayment,
       termWeeks: data.duration,
@@ -432,4 +443,40 @@ export async function searchLoans(searchTerm: string): Promise<Loan[]> {
     loan.customerName?.toLowerCase().includes(searchLower) ||
     loan.purpose?.toLowerCase().includes(searchLower)
   );
+}
+
+// Function to update existing loans with customer names
+export async function updateLoansWithCustomerNames(): Promise<void> {
+  try {
+    const loansSnapshot = await getDocs(collection(db, COLLECTION_NAME));
+    const batch: any[] = [];
+
+    for (const loanDoc of loansSnapshot.docs) {
+      const loan = loanDoc.data() as Loan;
+      
+      // Skip if customer name is already populated
+      if (loan.customerName && loan.customerName !== '') {
+        continue;
+      }
+
+      // Get customer data
+      const customerRef = doc(db, 'customers', loan.customerId);
+      const customerDoc = await getDoc(customerRef);
+      
+      if (customerDoc.exists()) {
+        const customer = customerDoc.data();
+        const customerName = `${customer.firstName} ${customer.lastName}`;
+        
+        // Update loan with customer name
+        const loanRef = doc(db, COLLECTION_NAME, loanDoc.id);
+        await updateDoc(loanRef, {
+          customerName: customerName,
+          updatedAt: Timestamp.now(),
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error updating loans with customer names:', error);
+    throw error;
+  }
 }

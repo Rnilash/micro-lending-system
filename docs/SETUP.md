@@ -27,7 +27,7 @@ This guide will help you set up your development environment for the Digital Mic
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Rnilash/micro-lending-system.git
+git clone https://github.com/your-username/micro-lending-system.git
 cd micro-lending-system
 ```
 

@@ -140,7 +140,7 @@ The agent interface is designed for tablet and smartphone use:
 │  📋 Collections Today: 15/18        │
 │  💰 Amount Collected: Rs. 31,625    │
 │  🎯 Target: Rs. 35,000              │
-│  📍 Next: Kasun Perera              │
+│  📍 Next: John Doe                 │
 └─────────────────────────────────────┘
 ```
 
@@ -175,7 +175,7 @@ The agent interface is designed for tablet and smartphone use:
 
 2. **Payment Details**
    ```
-   Customer: Kasun Perera
+   Customer: John Doe
    Loan: LOAN001234
    Due Amount: Rs. 2,108.33
    Collecting: Rs. 2,108.33
@@ -205,8 +205,8 @@ The agent interface is designed for tablet and smartphone use:
 
 #### Personal Information
 ```
-First Name: කසුන් (Kasun)
-Last Name: පෙරේරා (Perera)
+First Name: ජෝන් (John)
+Last Name: ඩෝ (Doe)
 NIC Number: 199012345678
 Date of Birth: 1990-05-15
 Gender: Male
@@ -218,7 +218,7 @@ Monthly Income: Rs. 75,000
 ```
 Primary Phone: +94 77 123 4567
 Secondary Phone: +94 11 234 5678
-Email: kasun.perera@gmail.com
+Email: customer.example@email.com
 Address: 123 Main Street, Colombo 03
 District: Colombo
 Postal Code: 00300
@@ -263,7 +263,7 @@ Required documents:
 ┌─────────────────────────────────────┐
 │        Customer Profile             │
 ├─────────────────────────────────────┤
-│  📸 [Photo] Kasun Perera           │
+│  📸 [Photo] John Doe               │
 │  🆔 CUST001234                     │
 │  📱 +94 77 123 4567               │
 │  🏠 Colombo 03                     │
@@ -290,7 +290,7 @@ Required documents:
 
 #### 1. Create Application
 ```
-Customer: Kasun Perera (CUST001234)
+Customer: John Doe (CUST001234)
 Loan Amount: Rs. 100,000
 Purpose: Business Expansion
 Loan Term: 52 weeks (1 year)
@@ -310,7 +310,7 @@ Total Interest: Rs. 9,633.16
 
 #### 3. Guarantor Information
 ```
-Guarantor Name: Sunil Silva
+Guarantor Name: Jane Smith
 NIC Number: 197512345678
 Relationship: Brother
 Phone Number: +94 71 234 5678
@@ -391,7 +391,7 @@ Weekly Payment = Rs. 2,108.33
 ┌─────────────────────────────────────┐
 │           Record Payment            │
 ├─────────────────────────────────────┤
-│  Customer: Kasun Perera            │
+│  Customer: John Doe            │
 │  Loan: LOAN001234                  │
 │  Due Amount: Rs. 2,108.33          │
 │  Payment Amount: Rs. 2,108.33      │
@@ -425,7 +425,7 @@ System automatically validates:
 ├─────────────────────────────────────┤
 │  Receipt No: RCP001234              │
 │  Date: 2024-04-06 10:30 AM         │
-│  Customer: Kasun Perera            │
+│  Customer: John Doe            │
 │  Loan No: LOAN001234               │
 ├─────────────────────────────────────┤
 │  Payment Amount: Rs. 2,108.33      │

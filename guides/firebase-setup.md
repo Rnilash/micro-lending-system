@@ -21,8 +21,8 @@ Complete guide for setting up and configuring Firebase for the Digital Micro-Len
 
 2. **Create New Project**
    ```
-   Project Name: micro-lending-system-prod
-   Project ID: micro-lending-system-prod (auto-generated)
+   Project Name: your-project-name-prod
+   Project ID: your-project-name-prod (auto-generated)
    Analytics: Enable Google Analytics (recommended)
    ```
 
@@ -33,9 +33,9 @@ Complete guide for setting up and configuring Firebase for the Digital Micro-Len
 ### 2. Project Structure
 ```
 Firebase Projects:
-├── micro-lending-system-dev     # Development environment
-├── micro-lending-system-staging # Staging environment  
-└── micro-lending-system-prod    # Production environment
+├── your-project-name-dev     # Development environment
+├── your-project-name-staging # Staging environment  
+└── your-project-name-prod    # Production environment
 ```
 
 ### 3. Install Firebase CLI
@@ -228,7 +228,7 @@ firebase init firestore
 
 # Choose existing project
 ? Please select an option: Use an existing project
-? Select a default Firebase project: micro-lending-system-prod
+? Select a default Firebase project: your-project-name-prod
 
 # Rules file
 ? What file should be used for Firestore Rules? firestore.rules
@@ -396,7 +396,7 @@ firebase init storage
 
 # Choose existing project
 ? Please select an option: Use an existing project
-? Select a default Firebase project: micro-lending-system-prod
+? Select a default Firebase project: your-project-name-prod
 
 # Rules file
 ? What file should be used for Storage Rules? storage.rules
@@ -704,7 +704,7 @@ firebase init functions
 
 # Choose existing project
 ? Please select an option: Use an existing project
-? Select a default Firebase project: micro-lending-system-prod
+? Select a default Firebase project: your-project-name-prod
 
 # Language selection
 ? What language would you like to use to write Cloud Functions? TypeScript

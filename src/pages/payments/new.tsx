@@ -31,7 +31,7 @@ interface PaymentForm {
 export default function NewPaymentPage() {
   const router = useRouter();
   const { loanId } = router.query;
-  const { loans, fetchLoans, fetchLoan } = useLoansStore();
+  const { loans, fetchLoans, fetchLoan, loading } = useLoansStore();
   const { createPayment } = usePaymentsStore();
   const { addNotification } = useUIStore();
   
@@ -69,7 +69,12 @@ export default function NewPaymentPage() {
         setSelectedLoan(loan);
         setValue('amount', loan.weeklyPayment);
       } else {
-        fetchLoan(loanId).then(setSelectedLoan);
+        fetchLoan(loanId).then((fetchedLoan) => {
+          if (fetchedLoan) {
+            setSelectedLoan(fetchedLoan);
+            setValue('amount', fetchedLoan.weeklyPayment);
+          }
+        });
       }
     }
   }, [loanId, loans, setValue, fetchLoan]);
@@ -81,9 +86,20 @@ export default function NewPaymentPage() {
       if (loan) {
         setSelectedLoan(loan);
         setValue('amount', loan.weeklyPayment);
+      } else {
+        // If loan not found in current loans array, fetch it individually
+        fetchLoan(watchedLoanId).then((fetchedLoan) => {
+          if (fetchedLoan) {
+            setSelectedLoan(fetchedLoan);
+            setValue('amount', fetchedLoan.weeklyPayment);
+          }
+        });
       }
+    } else {
+      // Clear selected loan if no loan is selected
+      setSelectedLoan(null);
     }
-  }, [watchedLoanId, loans, setValue]);
+  }, [watchedLoanId, loans, setValue, fetchLoan]);
 
   useEffect(() => {
     // Calculate remaining balance after payment
@@ -206,18 +222,46 @@ export default function NewPaymentPage() {
                         <select
                           {...register('loanId', { required: 'Please select a loan' })}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          disabled={!!loanId}
+                          disabled={!!loanId || loading}
                         >
-                          <option value="">Choose a loan...</option>
-                          {activeLoans.map((loan) => (
-                            <option key={loan.id} value={loan.id}>
-                              {loan.loanNumber} - {loan.customerName} 
-                              (Balance: {formatCurrency(loan.remainingBalance)})
-                            </option>
-                          ))}
+                          <option value="">
+                            {loading ? 'Loading loans...' : 'Choose a loan...'}
+                          </option>
+                          {loading ? (
+                            <option value="" disabled>Loading active loans...</option>
+                          ) : activeLoans.length === 0 ? (
+                            <option value="" disabled>No active loans available</option>
+                          ) : (
+                            activeLoans.map((loan) => (
+                              <option key={loan.id} value={loan.id}>
+                                {loan.loanNumber} - {loan.customerName || 'Unknown Customer'} 
+                                (Balance: {formatCurrency(loan.remainingBalance)})
+                              </option>
+                            ))
+                          )}
                         </select>
                         {errors.loanId && (
                           <p className="mt-1 text-sm text-red-600">{errors.loanId.message}</p>
+                        )}
+                        
+                        {activeLoans.length === 0 && !loading && (
+                          <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                            <p className="text-sm text-gray-600 mb-2">
+                              No active loans found. This could mean:
+                            </p>
+                            <ul className="text-xs text-gray-500 list-disc list-inside space-y-1">
+                              <li>All loans are completed or pending approval</li>
+                              <li>Loans haven&apos;t been created yet</li>
+                              <li>Data is still loading</li>
+                            </ul>
+                            <button
+                              type="button"
+                              onClick={() => fetchLoans()}
+                              className="mt-2 text-blue-600 text-sm hover:text-blue-800 underline"
+                            >
+                              🔄 Refresh loan list
+                            </button>
+                          </div>
                         )}
                       </div>
 
@@ -226,7 +270,7 @@ export default function NewPaymentPage() {
                           <h3 className="font-medium text-blue-900 mb-2">Loan Details</h3>
                           <div className="grid grid-cols-2 gap-4 text-sm text-blue-800">
                             <div>
-                              <p><strong>Customer:</strong> {selectedLoan.customerName}</p>
+                              <p><strong>Customer:</strong> {selectedLoan.customerName || 'Name not available'}</p>
                               <p><strong>Loan Number:</strong> {selectedLoan.loanNumber}</p>
                             </div>
                             <div>
@@ -234,6 +278,11 @@ export default function NewPaymentPage() {
                               <p><strong>Remaining Balance:</strong> {formatCurrency(selectedLoan.remainingBalance)}</p>
                             </div>
                           </div>
+                          {(!selectedLoan.customerName || selectedLoan.customerName === '') && (
+                            <div className="mt-2 p-2 bg-yellow-100 border border-yellow-300 rounded text-yellow-800 text-xs">
+                              ⚠️ Customer name not populated for this loan. This may be an old loan record.
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -346,6 +395,7 @@ export default function NewPaymentPage() {
                       {previewUrl && (
                         <div className="mt-4">
                           <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={previewUrl}
                             alt="Receipt preview"
