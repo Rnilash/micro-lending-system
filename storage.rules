@@ -1,0 +1,80 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+    
+    function isAgent() {
+      return isAuthenticated() && getUserRole() == 'agent';
+    }
+    
+    function isAssignedAgent(customerId) {
+      return isAgent() && 
+        firestore.get(/databases/(default)/documents/customers/$(customerId)).data.assignedAgent == request.auth.uid;
+    }
+    
+    // User avatars
+    match /avatars/{userId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+        request.auth.uid == userId &&
+        (resource == null || 
+         (request.resource.size < 2 * 1024 * 1024 && // 2MB limit
+          request.resource.contentType.matches('image/.*')));
+    }
+    
+    // Customer documents
+    match /documents/{customerId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        (isAdmin() || isAssignedAgent(customerId));
+      allow write: if isAuthenticated() && 
+        (isAdmin() || isAgent()) &&
+        request.resource.size < 5 * 1024 * 1024; // 5MB limit
+    }
+    
+    // Payment receipts
+    match /receipts/{paymentId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+        (isAdmin() || isAgent()) &&
+        request.resource.size < 3 * 1024 * 1024; // 3MB limit
+    }
+    
+    // Loan documents
+    match /loan_documents/{loanId}/{fileName} {
+      allow read: if isAuthenticated() && 
+        (isAdmin() || 
+         firestore.get(/databases/(default)/documents/loans/$(loanId)).data.managedBy == request.auth.uid);
+      allow write: if isAuthenticated() && 
+        (isAdmin() || isAgent()) &&
+        request.resource.size < 5 * 1024 * 1024; // 5MB limit
+    }
+    
+    // Business documents (admin only)
+    match /business/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() &&
+        request.resource.size < 10 * 1024 * 1024; // 10MB limit
+    }
+    
+    // Backup files (admin only)
+    match /backups/{fileName} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Temporary files (auto-delete after 24 hours)
+    match /temp/{userId}/{fileName} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}

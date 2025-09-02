@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+    
+    function isAgent() {
+      return isAuthenticated() && getUserRole() == 'agent';
+    }
+    
+    function isAssignedAgent(customerId) {
+      return isAgent() && 
+        get(/databases/$(database)/documents/customers/$(customerId)).data.assignedAgent == request.auth.uid;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isAdmin() || isOwner(userId));
+      allow write: if isAdmin() || (isOwner(userId) && 
+        !('role' in request.resource.data) || 
+        request.resource.data.role == resource.data.role);
+    }
+    
+    // Customers collection
+    match /customers/{customerId} {
+      allow read: if isAdmin() || isAssignedAgent(customerId);
+      allow create: if isAdmin() || isAgent();
+      allow update: if isAdmin() || isAssignedAgent(customerId);
+      allow delete: if isAdmin();
+    }
+    
+    // Loans collection
+    match /loans/{loanId} {
+      allow read: if isAdmin() || isAssignedAgent(resource.data.customerId);
+      allow create: if isAdmin() || isAgent();
+      allow update: if isAdmin() || (isAgent() && 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'notes', 'paidInstallments', 'outstandingBalance']));
+      allow delete: if isAdmin();
+    }
+    
+    // Payments collection
+    match /payments/{paymentId} {
+      allow read: if isAdmin() || resource.data.collectedBy == request.auth.uid;
+      allow create: if isAdmin() || isAgent();
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Settings collection (admin only)
+    match /settings/{settingId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Interest rates collection
+    match /interest_rates/{rateId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Business info collection
+    match /business_info/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      allow read, write: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated();
+    }
+    
+    // Audit logs collection (read-only for users, write-only for system)
+    match /audit_logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if false; // Only system can write audit logs
+    }
+    
+    // Reports collection (cached reports)
+    match /reports/{reportId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    
+    // Counters collection (for auto-incrementing IDs)
+    match /counters/{counterId} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
