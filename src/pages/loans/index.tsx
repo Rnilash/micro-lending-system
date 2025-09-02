@@ -6,13 +6,13 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { useLoansStore } from '@/store/loans';
 import type { LoanStatus } from '@/types';
 import {
-    BanknotesIcon,
-    CheckCircleIcon,
-    ClockIcon,
-    DocumentTextIcon,
-    MagnifyingGlassIcon,
-    PlusIcon,
-    XCircleIcon,
+  BanknotesIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  DocumentTextIcon,
+  MagnifyingGlassIcon,
+  PlusIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -112,31 +112,34 @@ export default function LoansPage() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Loans</h1>
-            <p className="text-gray-600 mt-1">Manage loan applications and active loans</p>
+      <div className="p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Page Header */}
+          <div className="mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Loans</h1>
+                <p className="text-gray-600">Manage loan applications and active loans</p>
+              </div>
+              <div className="mt-4 sm:mt-0 flex space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => router.push('/reports/loans')}
+                  className="flex items-center space-x-2"
+                >
+                  <DocumentTextIcon className="w-4 h-4" />
+                  <span>Reports</span>
+                </Button>
+                <Button
+                  onClick={() => router.push('/loans/new')}
+                  className="flex items-center space-x-2"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  <span>New Loan</span>
+                </Button>
+              </div>
+            </div>
           </div>
-          <div className="mt-4 sm:mt-0 flex space-x-3">
-            <Button
-              variant="outline"
-              onClick={() => router.push('/reports/loans')}
-              className="flex items-center space-x-2"
-            >
-              <DocumentTextIcon className="w-4 h-4" />
-              <span>Reports</span>
-            </Button>
-            <Button
-              onClick={() => router.push('/loans/new')}
-              className="flex items-center space-x-2"
-            >
-              <PlusIcon className="w-4 h-4" />
-              <span>New Loan</span>
-            </Button>
-          </div>
-        </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -363,6 +366,7 @@ export default function LoansPage() {
             </div>
           )}
         </Card>
+        </div>
       </div>
     </Layout>
   );

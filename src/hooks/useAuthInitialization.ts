@@ -1,5 +1,5 @@
-import { auth } from '@/lib/firebase';
 import authService from '@/lib/auth';
+import { auth } from '@/lib/firebase';
 import { useAuthStore } from '@/store/auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect } from 'react';

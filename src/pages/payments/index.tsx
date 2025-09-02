@@ -1,24 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import {
-  PlusIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon,
-  BanknotesIcon,
-  ReceiptPercentIcon,
-  CalendarIcon,
-  CheckCircleIcon,
-  ClockIcon,
-} from '@heroicons/react/24/outline';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Loading, Skeleton } from '@/components/ui/Loading';
+import { Skeleton } from '@/components/ui/Loading';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { usePaymentsStore } from '@/store/payments';
 import { useUIStore } from '@/store/ui';
 import type { Payment, PaymentMethod } from '@/types';
+import {
+  BanknotesIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  MagnifyingGlassIcon,
+  PlusIcon,
+  ReceiptPercentIcon
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 const paymentMethodColors = {
   cash: 'bg-green-100 text-green-800',
@@ -132,31 +130,34 @@ export default function PaymentsPage() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Payments</h1>
-            <p className="text-gray-600 mt-1">Track and manage loan payments</p>
+      <div className="p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Page Header */}
+          <div className="mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Payments</h1>
+                <p className="text-gray-600">Track and manage loan payments</p>
+              </div>
+              <div className="mt-4 sm:mt-0 flex space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={() => router.push('/reports/payments')}
+                  className="flex items-center space-x-2"
+                >
+                  <ReceiptPercentIcon className="w-4 h-4" />
+                  <span>Reports</span>
+                </Button>
+                <Button
+                  onClick={() => router.push('/payments/new')}
+                  className="flex items-center space-x-2"
+                >
+                  <PlusIcon className="w-4 h-4" />
+                  <span>Record Payment</span>
+                </Button>
+              </div>
+            </div>
           </div>
-          <div className="mt-4 sm:mt-0 flex space-x-3">
-            <Button
-              variant="outline"
-              onClick={() => router.push('/reports/payments')}
-              className="flex items-center space-x-2"
-            >
-              <ReceiptPercentIcon className="w-4 h-4" />
-              <span>Reports</span>
-            </Button>
-            <Button
-              onClick={() => router.push('/payments/new')}
-              className="flex items-center space-x-2"
-            >
-              <PlusIcon className="w-4 h-4" />
-              <span>Record Payment</span>
-            </Button>
-          </div>
-        </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -395,6 +396,7 @@ export default function PaymentsPage() {
             </div>
           </Card>
         )}
+        </div>
       </div>
     </Layout>
   );

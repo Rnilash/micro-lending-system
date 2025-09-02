@@ -1,3 +1,4 @@
+import type { CreateLoanData } from '@/services/loans';
 import * as loanService from '@/services/loans';
 import type { Loan } from '@/types';
 import { create } from 'zustand';
@@ -32,7 +33,7 @@ interface LoanState {
   setPagination: (pagination: any) => void;
   fetchLoans: () => Promise<void>;
   fetchLoan: (id: string) => Promise<Loan | null>;
-  createLoan: (loanData: any) => Promise<Loan>;
+  createLoan: (loanData: CreateLoanData) => Promise<Loan>;
   searchLoans: (query: string) => Promise<void>;
   approveLoan: (id: string) => Promise<void>;
   rejectLoan: (id: string, reason: string) => Promise<void>;
@@ -111,19 +112,23 @@ export const useLoansStore = create<LoanState>()(
           return null;
         }
       },
-      createLoan: async (loanData: any): Promise<Loan> => {
+      createLoan: async (loanData: CreateLoanData): Promise<Loan> => {
         try {
+          set({ loading: true });
+          
           const loanId = await loanService.createLoan(loanData);
           const loan = await loanService.getLoan(loanId);
+          
           if (loan) {
             set((state) => ({
               loans: [loan, ...state.loans],
+              loading: false,
             }));
             return loan;
           }
           throw new Error('Failed to retrieve created loan');
         } catch (error) {
-          console.error('Failed to create loan:', error);
+          set({ loading: false });
           throw error;
         }
       },

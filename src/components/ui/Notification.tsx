@@ -7,7 +7,7 @@ import {
     InformationCircleIcon,
     XMarkIcon
 } from '@heroicons/react/24/outline';
-import { Fragment, useEffect } from 'react';
+import { forwardRef, useEffect } from 'react';
 
 interface NotificationProps {
   id: string;
@@ -17,7 +17,7 @@ interface NotificationProps {
   onClose: (id: string) => void;
 }
 
-function Notification({ id, type, title, message, onClose }: NotificationProps) {
+const Notification = forwardRef<HTMLDivElement, NotificationProps>(({ id, type, title, message, onClose }, ref) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose(id);
@@ -50,7 +50,10 @@ function Notification({ id, type, title, message, onClose }: NotificationProps) 
   const Icon = icons[type];
 
   return (
-    <div className={`max-w-sm w-full ${bgColors[type]} shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden`}>
+    <div 
+      ref={ref}
+      className={`max-w-sm w-full ${bgColors[type]} shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden`}
+    >
       <div className="p-4">
         <div className="flex items-start">
           <div className="flex-shrink-0">
@@ -73,14 +76,12 @@ function Notification({ id, type, title, message, onClose }: NotificationProps) 
       </div>
     </div>
   );
-}
+});
+
+Notification.displayName = 'Notification';
 
 function NotificationContainer() {
-  const { notifications } = useUIStore();
-
-  const removeNotification = (id: string) => {
-    // This will be handled by the store
-  };
+  const { notifications, removeNotification } = useUIStore();
 
   return (
     <div
@@ -92,7 +93,6 @@ function NotificationContainer() {
           <Transition
             key={notification.id}
             show={true}
-            as={Fragment}
             enter="transform ease-out duration-300 transition"
             enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
             enterTo="translate-y-0 opacity-100 sm:translate-x-0"

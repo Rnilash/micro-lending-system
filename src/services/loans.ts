@@ -1,18 +1,19 @@
 import { db } from '@/lib/firebase';
 import type { Loan, LoanStatus } from '@/types';
 import {
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    limit,
-    orderBy,
-    query,
-    runTransaction,
-    startAfter,
-    Timestamp,
-    updateDoc,
-    where
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  runTransaction,
+  setDoc,
+  startAfter,
+  Timestamp,
+  updateDoc,
+  where
 } from 'firebase/firestore';
 
 const COLLECTION_NAME = 'loans';
@@ -48,91 +49,74 @@ export interface PaginationOptions {
 // Create a new loan
 export async function createLoan(data: CreateLoanData): Promise<string> {
   try {
-    return await runTransaction(db, async (transaction) => {
-      // Calculate loan details
-      const weeklyPayment = calculateWeeklyPayment(
-        data.principalAmount,
-        data.interestRate,
-        data.duration
-      );
-      
-      const totalAmount = weeklyPayment * data.duration;
+    // Calculate loan details using simple flat interest method
+    const weeklyInterest = data.interestRate / 100;
+    const totalWithInterest = data.principalAmount * (1 + (weeklyInterest * data.duration));
+    const weeklyPayment = totalWithInterest / data.duration;
 
-      const loanData: Omit<Loan, 'id'> = {
-        customerId: data.customerId,
-        loanNumber: await generateLoanNumber(),
-        customerName: '', // Will be populated by transaction update
-        principalAmount: data.principalAmount,
-        weeklyPayment,
-        termWeeks: data.duration,
-        totalRepayment: totalAmount,
-        outstandingAmount: totalAmount,
-        remainingBalance: totalAmount,
-        paidAmount: 0,
-        agentId: data.agentId,
-        applicationDate: Timestamp.now().toDate(),
-        amount: data.principalAmount,
-        interestRate: data.interestRate,
-        calculationMethod: 'flat',
-        term: data.duration,
-        installmentAmount: weeklyPayment,
-        totalAmount,
-        purpose: data.purpose,
-        status: 'pending',
-        approvalWorkflow: [],
-        expectedEndDate: new Date(Date.now() + data.duration * 7 * 24 * 60 * 60 * 1000),
-        disbursementDate: undefined,
-        startDate: undefined,
-        endDate: undefined,
-        nextPaymentDate: undefined,
-        paidInstallments: 0,
-        totalInstallments: data.duration,
-        outstandingBalance: totalAmount,
-        penaltyAmount: 0,
-        collateral: data.collateral ? [{ 
-          type: 'Other', 
-          description: data.collateral, 
-          estimatedValue: 0, 
-          documents: [] 
-        }] : [],
-        guarantors: data.guarantorInfo ? [{ 
-          name: data.guarantorInfo.name, 
-          nic: data.guarantorInfo.nic,
-          phone: data.guarantorInfo.phone, 
-          address: data.guarantorInfo.address, 
-          relationship: 'Guarantor',
-          occupation: '',
-          monthlyIncome: 0,
-          documents: []
-        }] : [],
-        documents: [],
-        notes: [],
-        createdAt: Timestamp.now().toDate(),
-        updatedAt: Timestamp.now().toDate(),
-        createdBy: data.agentId,
-        managedBy: data.agentId,
-      };
+    // Generate simple loan number (avoid complex queries for now)
+    const year = new Date().getFullYear();
+    const month = String(new Date().getMonth() + 1).padStart(2, '0');
+    const random = Math.floor(Math.random() * 9999) + 1;
+    const loanNumber = `LN${year}${month}${String(random).padStart(4, '0')}`;
 
-      // Create loan document
-      const loanRef = doc(collection(db, COLLECTION_NAME));
-      transaction.set(loanRef, loanData);
+    const loanData: Omit<Loan, 'id'> = {
+      customerId: data.customerId,
+      loanNumber: loanNumber,
+      customerName: '', // Will be populated later
+      principalAmount: data.principalAmount,
+      weeklyPayment,
+      termWeeks: data.duration,
+      totalRepayment: totalWithInterest,
+      outstandingAmount: totalWithInterest,
+      remainingBalance: totalWithInterest,
+      paidAmount: 0,
+      agentId: data.agentId,
+      applicationDate: Timestamp.now().toDate(),
+      amount: data.principalAmount,
+      interestRate: data.interestRate,
+      calculationMethod: 'flat',
+      term: data.duration,
+      installmentAmount: weeklyPayment,
+      totalAmount: totalWithInterest,
+      purpose: data.purpose,
+      status: 'pending',
+      approvalWorkflow: [],
+      expectedEndDate: new Date(Date.now() + data.duration * 7 * 24 * 60 * 60 * 1000),
+      // Note: disbursementDate, startDate, endDate, nextPaymentDate will be set when loan is approved/disbursed
+      paidInstallments: 0,
+      totalInstallments: data.duration,
+      outstandingBalance: totalWithInterest,
+      penaltyAmount: 0,
+      collateral: data.collateral ? [{ 
+        type: 'Other', 
+        description: data.collateral, 
+        estimatedValue: 0, 
+        documents: [] 
+      }] : [],
+      guarantors: data.guarantorInfo ? [{ 
+        name: data.guarantorInfo.name, 
+        nic: data.guarantorInfo.nic,
+        phone: data.guarantorInfo.phone, 
+        address: data.guarantorInfo.address, 
+        relationship: 'Guarantor',
+        occupation: '',
+        monthlyIncome: 0,
+        documents: []
+      }] : [],
+      documents: [],
+      notes: [],
+      createdAt: Timestamp.now().toDate(),
+      updatedAt: Timestamp.now().toDate(),
+      createdBy: data.agentId,
+      managedBy: data.agentId,
+    };
 
-      // Update customer stats
-      const customerRef = doc(db, 'customers', data.customerId);
-      const customerDoc = await transaction.get(customerRef);
-      
-      if (customerDoc.exists()) {
-        const customerData = customerDoc.data();
-        transaction.update(customerRef, {
-          totalLoans: (customerData.totalLoans || 0) + 1,
-          updatedAt: Timestamp.now(),
-        });
-      }
-
-      return loanRef.id;
-    });
+    // Create loan document
+    const loanRef = doc(collection(db, COLLECTION_NAME));
+    await setDoc(loanRef, loanData);
+    return loanRef.id;
   } catch (error) {
-    console.error('Error creating loan:', error);
     throw error;
   }
 }
@@ -388,14 +372,14 @@ export async function updateLoanPayment(
 }
 
 // Helper functions
-function calculateWeeklyPayment(principal: number, annualRate: number, weeks: number): number {
-  const weeklyRate = annualRate / 100 / 52;
-  if (weeklyRate === 0) {
+function calculateWeeklyPayment(principal: number, weeklyRate: number, weeks: number): number {
+  const rate = weeklyRate / 100; // Convert percentage to decimal
+  if (rate === 0) {
     return principal / weeks;
   }
   
-  const payment = (principal * weeklyRate * Math.pow(1 + weeklyRate, weeks)) / 
-                  (Math.pow(1 + weeklyRate, weeks) - 1);
+  const payment = (principal * rate * Math.pow(1 + rate, weeks)) / 
+                  (Math.pow(1 + rate, weeks) - 1);
   
   return Math.round(payment * 100) / 100; // Round to 2 decimal places
 }

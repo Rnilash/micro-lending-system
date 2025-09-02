@@ -1,26 +1,23 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import {
-  MapPinIcon,
-  CalendarIcon,
-  UserGroupIcon,
-  BanknotesIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  ExclamationTriangleIcon,
-  FunnelIcon,
-  PhoneIcon,
-  EyeIcon,
-} from '@heroicons/react/24/outline';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Loading, Skeleton } from '@/components/ui/Loading';
+import { Skeleton } from '@/components/ui/Loading';
 import { formatCurrency, formatDate, formatPhoneNumber } from '@/lib/utils';
 import { useLoansStore } from '@/store/loans';
 import { usePaymentsStore } from '@/store/payments';
 import { useUIStore } from '@/store/ui';
 import type { Loan } from '@/types';
+import {
+  BanknotesIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  ExclamationTriangleIcon,
+  MapPinIcon,
+  PhoneIcon,
+  UserGroupIcon
+} from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 interface CollectionItem {
   loan: Loan;
@@ -160,45 +157,48 @@ export default function CollectionsPage() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Collections</h1>
-            <p className="text-gray-600 mt-1">Manage field collection operations and overdue payments</p>
-          </div>
-          <div className="mt-4 sm:mt-0 flex space-x-3">
-            <div className="flex rounded-lg border border-gray-300 overflow-hidden">
-              <button
-                onClick={() => setViewMode('list')}
-                className={`px-3 py-2 text-sm font-medium ${
-                  viewMode === 'list' 
-                    ? 'bg-blue-50 text-blue-700 border-blue-300' 
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                List View
-              </button>
-              <button
-                onClick={() => setViewMode('map')}
-                className={`px-3 py-2 text-sm font-medium border-l ${
-                  viewMode === 'map' 
-                    ? 'bg-blue-50 text-blue-700 border-blue-300' 
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Map View
-              </button>
+      <div className="p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Page Header */}
+          <div className="mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Collections</h1>
+                <p className="text-gray-600">Manage field collection operations and overdue payments</p>
+              </div>
+              <div className="mt-4 sm:mt-0 flex space-x-3">
+                <div className="flex rounded-lg border border-gray-300 overflow-hidden">
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`px-3 py-2 text-sm font-medium ${
+                      viewMode === 'list'
+                        ? 'bg-blue-50 text-blue-700 border-blue-300'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    List View
+                  </button>
+                  <button
+                    onClick={() => setViewMode('map')}
+                    className={`px-3 py-2 text-sm font-medium border-l ${
+                      viewMode === 'map'
+                        ? 'bg-blue-50 text-blue-700 border-blue-300'
+                        : 'bg-white text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    Map View
+                  </button>
+                </div>
+                <Button
+                  onClick={() => router.push('/collections/routes')}
+                  className="flex items-center space-x-2"
+                >
+                  <MapPinIcon className="w-4 h-4" />
+                  <span>Plan Route</span>
+                </Button>
+              </div>
             </div>
-            <Button
-              onClick={() => router.push('/collections/routes')}
-              className="flex items-center space-x-2"
-            >
-              <MapPinIcon className="w-4 h-4" />
-              <span>Plan Route</span>
-            </Button>
           </div>
-        </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -470,6 +470,7 @@ export default function CollectionsPage() {
             </div>
           </Card>
         )}
+        </div>
       </div>
     </Layout>
   );

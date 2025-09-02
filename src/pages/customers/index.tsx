@@ -8,14 +8,14 @@ import { useAuthStore } from '@/store/auth';
 import { useCustomerStore } from '@/store/customers';
 import type { CustomerStatus } from '@/types';
 import {
-    EyeIcon,
-    FunnelIcon,
-    MagnifyingGlassIcon,
-    MapPinIcon,
-    PencilIcon,
-    PhoneIcon,
-    PlusIcon,
-    UserIcon,
+  EyeIcon,
+  FunnelIcon,
+  MagnifyingGlassIcon,
+  MapPinIcon,
+  PencilIcon,
+  PhoneIcon,
+  PlusIcon,
+  UserIcon,
 } from '@heroicons/react/24/outline';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -131,20 +131,23 @@ export default function CustomersPage() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
-            <p className="text-gray-600">Manage your customer database</p>
+      <div className="p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Page Header */}
+          <div className="mb-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
+                <p className="text-gray-600">Manage your customer database</p>
+              </div>
+              <Link href="/customers/new">
+                <Button>
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Add Customer
+                </Button>
+              </Link>
+            </div>
           </div>
-          <Link href="/customers/new">
-            <Button>
-              <PlusIcon className="h-4 w-4 mr-2" />
-              Add Customer
-            </Button>
-          </Link>
-        </div>
 
         {/* Search and Filters */}
         <Card>
@@ -258,10 +261,10 @@ export default function CustomersPage() {
               <div className="animate-pulse space-y-4">
                 {[...Array(5)].map((_, i) => (
                   <div key={i} className="flex items-center space-x-4">
-                    <div className="rounded-full bg-gray-300 h-12 w-12"></div>
+                    <div className="rounded-full bg-gray-300 h-12 w-12" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-gray-300 rounded w-1/4"></div>
-                      <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                      <div className="h-4 bg-gray-300 rounded w-1/4" />
+                      <div className="h-3 bg-gray-300 rounded w-1/2" />
                     </div>
                   </div>
                 ))}
@@ -437,6 +440,7 @@ export default function CustomersPage() {
             </div>
           )}
         </Card>
+        </div>
       </div>
     </Layout>
   );

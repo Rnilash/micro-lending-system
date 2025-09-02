@@ -36,7 +36,7 @@ export interface CreateCustomerData {
   };
   occupation: string;
   monthlyIncome: number;
-  agentId: string;
+  agentId?: string; // Made optional - can be assigned later
 }
 
 export interface UpdateCustomerData extends Partial<CreateCustomerData> {
@@ -126,7 +126,7 @@ export async function createCustomer(data: CreateCustomerData): Promise<string> 
       // System fields
       status: 'active' as CustomerStatus,
       kycStatus: 'pending',
-      assignedAgent: data.agentId,
+      assignedAgent: data.agentId || '', // Use provided agentId or empty string if not assigned
       riskRating: 'medium',
       notes: [],
       registrationDate: Timestamp.now() as any,
@@ -138,7 +138,7 @@ export async function createCustomer(data: CreateCustomerData): Promise<string> 
       creditScore: 0,
       createdAt: Timestamp.now() as any,
       updatedAt: Timestamp.now() as any,
-      createdBy: data.agentId,
+      createdBy: data.agentId || 'system', // Use provided agentId or 'system' if not assigned
     };
 
     const docRef = await addDoc(collection(db, COLLECTION_NAME), customerData);

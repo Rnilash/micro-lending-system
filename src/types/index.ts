@@ -31,7 +31,6 @@ export interface UserProfile {
 
 export interface UserPreferences {
   language: 'en' | 'si';
-  theme: 'light' | 'dark';
   notifications: NotificationSettings;
   dateFormat: string;
   currency: string;
@@ -436,7 +435,6 @@ export interface UIState {
     [key: string]: boolean;
   };
   notifications: Notification[];
-  theme: 'light' | 'dark';
   language: 'en' | 'si';
 }
 

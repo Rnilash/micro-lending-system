@@ -1,6 +1,5 @@
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
 import { Loading } from '@/components/ui/Loading';
 import { Modal } from '@/components/ui/Modal';
 import { formatCurrency, formatDate, formatPhoneNumber } from '@/lib/utils';
@@ -30,8 +29,7 @@ export default function LoanDetailPage() {
     loading, 
     fetchLoan, 
     approveLoan, 
-    rejectLoan, 
-    updateLoanStatus 
+    rejectLoan
   } = useLoansStore();
   const { payments, fetchPaymentsByLoan } = usePaymentsStore();
   const { addNotification } = useUIStore();
@@ -152,46 +150,51 @@ export default function LoanDetailPage() {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              onClick={() => router.push('/loans')}
-              className="flex items-center space-x-2"
-            >
-              <ArrowLeftIcon className="w-4 h-4" />
-              <span>Back to Loans</span>
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Loan {currentLoan.loanNumber}
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Created {formatDate(currentLoan.applicationDate)}
-              </p>
-            </div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6 lg:p-8">
+        <div className="max-w-6xl mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-8">
+          <Button
+            variant="outline"
+            onClick={() => router.push('/loans')}
+            className="flex items-center space-x-2 hover:bg-white/80 transition-colors"
+          >
+            <ArrowLeftIcon className="w-4 h-4" />
+            <span>Back to Loans</span>
+          </Button>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900">
+              Loan {currentLoan.loanNumber}
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Created {formatDate(currentLoan.applicationDate)}
+            </p>
           </div>
+          <div className="w-24" /> {/* Spacer for centering */}
+        </div>
 
-          <div className="flex items-center space-x-3 mt-4 sm:mt-0">
+        {/* Status and Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+          <div className="flex items-center space-x-3">
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(currentLoan.status)}`}>
               {currentLoan.status.charAt(0).toUpperCase() + currentLoan.status.slice(1)}
             </span>
+          </div>
+          <div className="flex items-center space-x-3 mt-4 sm:mt-0">
             
             {currentLoan.status === 'pending' && (
               <>
                 <Button
                   variant="outline"
                   onClick={() => setShowRejectionModal(true)}
-                  className="flex items-center space-x-2 text-red-600 border-red-300 hover:bg-red-50"
+                  className="flex items-center space-x-2 text-red-600 border-red-300 hover:bg-red-50 hover:scale-[1.02] transition-all duration-200"
                 >
                   <XMarkIcon className="w-4 h-4" />
                   <span>Reject</span>
                 </Button>
                 <Button
                   onClick={() => setShowApprovalModal(true)}
-                  className="flex items-center space-x-2"
+                  className="flex items-center space-x-2 hover:scale-[1.02] transition-transform duration-200"
                 >
                   <CheckIcon className="w-4 h-4" />
                   <span>Approve</span>
@@ -199,7 +202,10 @@ export default function LoanDetailPage() {
               </>
             )}
             
-            <Button variant="outline" className="flex items-center space-x-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center space-x-2 hover:scale-[1.02] transition-transform duration-200"
+            >
               <PrinterIcon className="w-4 h-4" />
               <span>Print</span>
             </Button>
@@ -208,30 +214,35 @@ export default function LoanDetailPage() {
 
         {/* Progress Bar */}
         {currentLoan.status === 'active' && (
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Payment Progress</span>
-              <span className="text-sm text-gray-500">
-                {formatCurrency(totalPaid)} of {formatCurrency(currentLoan.totalRepayment || 0)} paid
-              </span>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80 transition-all duration-200 hover:shadow-md">
+            <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 rounded-t-lg">
+              <h2 className="text-lg font-semibold text-white">Payment Progress</h2>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className="bg-blue-600 h-3 rounded-full transition-all duration-300"
-                style={{ width: `${Math.min(paymentProgress, 100)}%` }}
-               />
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">Progress</span>
+                <span className="text-sm text-gray-500">
+                  {formatCurrency(totalPaid)} of {formatCurrency(currentLoan.totalRepayment || 0)} paid
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div
+                  className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+                  style={{ width: `${Math.min(paymentProgress, 100)}%` }}
+                 />
+              </div>
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>0%</span>
+                <span>{paymentProgress.toFixed(1)}%</span>
+                <span>100%</span>
+              </div>
             </div>
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>0%</span>
-              <span>{paymentProgress.toFixed(1)}%</span>
-              <span>100%</span>
-            </div>
-          </Card>
+          </div>
         )}
 
         {/* Tab Navigation */}
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80 transition-all duration-200 hover:shadow-md">
+          <nav className="flex space-x-8 px-6 py-4">
             {[
               { id: 'details', name: 'Loan Details', icon: DocumentTextIcon },
               { id: 'payments', name: 'Payment History', icon: BanknotesIcon },
@@ -239,11 +250,11 @@ export default function LoanDetailPage() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
+                onClick={() => setActiveTab(tab.id as 'details' | 'payments' | 'schedule')}
+                className={`py-2 px-4 rounded-lg font-medium text-sm flex items-center space-x-2 transition-all duration-200 ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -257,155 +268,173 @@ export default function LoanDetailPage() {
         {activeTab === 'details' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Customer Information */}
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <UserIcon className="w-5 h-5 mr-2" />
-                Customer Information
-              </h3>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-600">Name</p>
-                  <p className="font-medium">{currentLoan.customerName}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600">Customer ID</p>
-                  <p className="font-medium">{currentLoan.customerId}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => router.push(`/customers/${currentLoan.customerId}`)}
-                >
-                  View Customer Profile
-                </Button>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80 transition-all duration-200 hover:shadow-md">
+              <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 rounded-t-lg">
+                <h3 className="text-lg font-semibold text-white flex items-center">
+                  <UserIcon className="w-5 h-5 mr-2" />
+                  Customer Information
+                </h3>
               </div>
-            </Card>
+              <div className="p-6">
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-600">Name</p>
+                    <p className="font-medium">{currentLoan.customerName}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Customer ID</p>
+                    <p className="font-medium">{currentLoan.customerId}</p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push(`/customers/${currentLoan.customerId}`)}
+                    className="w-full hover:scale-[1.02] transition-transform duration-200"
+                  >
+                    View Customer Profile
+                  </Button>
+                </div>
+              </div>
+            </div>
 
             {/* Loan Summary */}
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <CurrencyDollarIcon className="w-5 h-5 mr-2" />
-                Loan Summary
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Principal Amount</span>
-                  <span className="font-medium">{formatCurrency(currentLoan.amount)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Interest Rate</span>
-                  <span className="font-medium">{currentLoan.interestRate}% per week</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Term</span>
-                  <span className="font-medium">{currentLoan.termWeeks} weeks</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Weekly Payment</span>
-                  <span className="font-medium">{formatCurrency(currentLoan.weeklyPayment)}</span>
-                </div>
-                <div className="border-t pt-3">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80 transition-all duration-200 hover:shadow-md">
+              <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 rounded-t-lg">
+                <h3 className="text-lg font-semibold text-white flex items-center">
+                  <CurrencyDollarIcon className="w-5 h-5 mr-2" />
+                  Loan Summary
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Total Repayment</span>
-                    <span className="font-bold">{formatCurrency(currentLoan.totalRepayment || 0)}</span>
+                    <span className="text-gray-600">Principal Amount</span>
+                    <span className="font-medium">{formatCurrency(currentLoan.amount)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Interest Rate</span>
+                    <span className="font-medium">{currentLoan.interestRate}% per week</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Term</span>
+                    <span className="font-medium">{currentLoan.termWeeks} weeks</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Weekly Payment</span>
+                    <span className="font-medium">{formatCurrency(currentLoan.weeklyPayment)}</span>
+                  </div>
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Total Repayment</span>
+                      <span className="font-bold">{formatCurrency(currentLoan.totalRepayment || 0)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
 
             {/* Payment Status */}
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <BanknotesIcon className="w-5 h-5 mr-2" />
-                Payment Status
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Total Paid</span>
-                  <span className="font-medium text-green-600">{formatCurrency(totalPaid)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Remaining Balance</span>
-                  <span className="font-medium text-blue-600">{formatCurrency(Math.max(0, remainingBalance))}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Payments Made</span>
-                  <span className="font-medium">{payments.length} payments</span>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80 transition-all duration-200 hover:shadow-md">
+              <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 rounded-t-lg">
+                <h3 className="text-lg font-semibold text-white flex items-center">
+                  <BanknotesIcon className="w-5 h-5 mr-2" />
+                  Payment Status
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total Paid</span>
+                    <span className="font-medium text-green-600">{formatCurrency(totalPaid)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Remaining Balance</span>
+                    <span className="font-medium text-blue-600">{formatCurrency(Math.max(0, remainingBalance))}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Payments Made</span>
+                    <span className="font-medium">{payments.length} payments</span>
+                  </div>
                 </div>
               </div>
-            </Card>
+            </div>
 
             {/* Loan Details */}
             <div className="lg:col-span-3">
-              <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Additional Information
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Purpose</p>
-                    <p className="font-medium">{currentLoan.purpose || 'Not specified'}</p>
-                  </div>
-                  {currentLoan.collateral && currentLoan.collateral.length > 0 && (
-                    <div>
-                      <p className="text-sm text-gray-600 mb-1">Collateral</p>
-                      <div className="space-y-2">
-                        {currentLoan.collateral.map((item, index) => (
-                          <div key={index} className="bg-gray-50 p-3 rounded">
-                            <p className="font-medium">{item.type}</p>
-                            {item.estimatedValue && <p className="text-sm text-gray-600">Value: {formatCurrency(item.estimatedValue)}</p>}
-                            {item.description && <p className="text-sm text-gray-600">{item.description}</p>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {currentLoan.guarantors && currentLoan.guarantors.length > 0 && (
-                    <div className="md:col-span-2">
-                      <p className="text-sm text-gray-600 mb-2">Guarantor Information</p>
-                      <div className="space-y-4">
-                        {currentLoan.guarantors.map((guarantor, index) => (
-                          <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                            <p><strong>Name:</strong> {guarantor.name}</p>
-                            <p><strong>Phone:</strong> {formatPhoneNumber(guarantor.phone)}</p>
-                            <p><strong>Address:</strong> {guarantor.address}</p>
-                            {guarantor.relationship && <p><strong>Relationship:</strong> {guarantor.relationship}</p>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {currentLoan.notes && currentLoan.notes.length > 0 && (
-                    <div className="md:col-span-2">
-                      <p className="text-sm text-gray-600 mb-1">Notes</p>
-                      <div className="space-y-2">
-                        {currentLoan.notes.map((note, index) => (
-                          <div key={index} className="bg-gray-50 p-3 rounded">
-                            <p className="font-medium">{note.content}</p>
-                            {note.createdAt && (
-                              <p className="text-xs text-gray-500 mt-1">
-                                {formatDate(note.createdAt)} {note.createdBy && `by ${note.createdBy}`}
-                              </p>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80 transition-all duration-200 hover:shadow-md">
+                <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 rounded-t-lg">
+                  <h3 className="text-lg font-semibold text-white">
+                    Additional Information
+                  </h3>
                 </div>
-              </Card>
+                <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Purpose</p>
+                      <p className="font-medium">{currentLoan.purpose || 'Not specified'}</p>
+                    </div>
+                    {currentLoan.collateral && currentLoan.collateral.length > 0 && (
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Collateral</p>
+                        <div className="space-y-2">
+                          {currentLoan.collateral.map((item, index) => (
+                            <div key={index} className="bg-gray-50 p-3 rounded">
+                              <p className="font-medium">{item.type}</p>
+                              {item.estimatedValue && <p className="text-sm text-gray-600">Value: {formatCurrency(item.estimatedValue)}</p>}
+                              {item.description && <p className="text-sm text-gray-600">{item.description}</p>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {currentLoan.guarantors && currentLoan.guarantors.length > 0 && (
+                      <div className="md:col-span-2">
+                        <p className="text-sm text-gray-600 mb-2">Guarantor Information</p>
+                        <div className="space-y-4">
+                          {currentLoan.guarantors.map((guarantor, index) => (
+                            <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                              <p><strong>Name:</strong> {guarantor.name}</p>
+                              <p><strong>Phone:</strong> {formatPhoneNumber(guarantor.phone)}</p>
+                              <p><strong>Address:</strong> {guarantor.address}</p>
+                              {guarantor.relationship && <p><strong>Relationship:</strong> {guarantor.relationship}</p>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {currentLoan.notes && currentLoan.notes.length > 0 && (
+                      <div className="md:col-span-2">
+                        <p className="text-sm text-gray-600 mb-1">Notes</p>
+                        <div className="space-y-2">
+                          {currentLoan.notes.map((note, index) => (
+                            <div key={index} className="bg-gray-50 p-3 rounded">
+                              <p className="font-medium">{note.content}</p>
+                              {note.createdAt && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {formatDate(note.createdAt)} {note.createdBy && `by ${note.createdBy}`}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === 'payments' && (
-          <Card>
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80 transition-all duration-200 hover:shadow-md">
+            <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 rounded-t-lg">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">Payment History</h3>
+                <h3 className="text-lg font-semibold text-white">Payment History</h3>
                 <Button
                   onClick={() => router.push(`/payments/new?loanId=${currentLoan.id}`)}
-                  className="flex items-center space-x-2"
+                  className="bg-white/10 hover:bg-white/20 text-white border-white/20 flex items-center space-x-2 transition-all duration-200 hover:scale-[1.02]"
+                  variant="outline"
                 >
                   <BanknotesIcon className="w-4 h-4" />
                   <span>Record Payment</span>
@@ -418,7 +447,10 @@ export default function LoanDetailPage() {
                 <BanknotesIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No payments recorded</h3>
                 <p className="text-gray-600 mb-6">Start recording payments for this loan.</p>
-                <Button onClick={() => router.push(`/payments/new?loanId=${currentLoan.id}`)}>
+                <Button 
+                  onClick={() => router.push(`/payments/new?loanId=${currentLoan.id}`)}
+                  className="hover:scale-[1.02] transition-transform duration-200"
+                >
                   Record First Payment
                 </Button>
               </div>
@@ -446,7 +478,7 @@ export default function LoanDetailPage() {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {payments.map((payment) => (
-                      <tr key={payment.id} className="hover:bg-gray-50">
+                      <tr key={payment.id} className="hover:bg-gray-50 transition-colors duration-200">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {formatDate(payment.paymentDate)}
                         </td>
@@ -468,14 +500,14 @@ export default function LoanDetailPage() {
                 </table>
               </div>
             )}
-          </Card>
+          </div>
         )}
 
         {activeTab === 'schedule' && (
-          <Card>
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Payment Schedule</h3>
-              <p className="text-gray-600 mt-1">Weekly payment schedule for this loan</p>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80 transition-all duration-200 hover:shadow-md">
+            <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 rounded-t-lg">
+              <h3 className="text-lg font-semibold text-white">Payment Schedule</h3>
+              <p className="text-white/80 mt-1">Weekly payment schedule for this loan</p>
             </div>
             
             <div className="overflow-x-auto">
@@ -503,7 +535,7 @@ export default function LoanDetailPage() {
                   {paymentSchedule.map((item) => (
                     <tr 
                       key={item.week} 
-                      className={`hover:bg-gray-50 ${
+                      className={`hover:bg-gray-50 transition-colors duration-200 ${
                         item.status === 'overdue' ? 'bg-red-50' : 
                         item.status === 'paid' ? 'bg-green-50' : ''
                       }`}
@@ -534,7 +566,7 @@ export default function LoanDetailPage() {
                 </tbody>
               </table>
             </div>
-          </Card>
+          </div>
         )}
 
         {/* Approval Modal */}
@@ -547,19 +579,22 @@ export default function LoanDetailPage() {
             <p className="text-gray-600">
               Are you sure you want to approve this loan for {currentLoan.customerName}?
             </p>
-            <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
               <p><strong>Loan Amount:</strong> {formatCurrency(currentLoan.amount)}</p>
               <p><strong>Weekly Payment:</strong> {formatCurrency(currentLoan.weeklyPayment)}</p>
               <p><strong>Term:</strong> {currentLoan.termWeeks} weeks</p>
             </div>
             <div className="flex space-x-3 pt-4">
-              <Button onClick={handleApproval} className="flex-1">
+              <Button 
+                onClick={handleApproval} 
+                className="flex-1 hover:scale-[1.02] transition-transform duration-200"
+              >
                 Approve Loan
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setShowApprovalModal(false)}
-                className="flex-1"
+                className="flex-1 hover:scale-[1.02] transition-transform duration-200"
               >
                 Cancel
               </Button>
@@ -582,26 +617,27 @@ export default function LoanDetailPage() {
               onChange={(e) => setRejectionReason(e.target.value)}
               rows={4}
               placeholder="Enter rejection reason..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all duration-200 focus:scale-[1.02]"
             />
             <div className="flex space-x-3 pt-4">
               <Button
                 onClick={handleRejection}
                 variant="outline"
-                className="flex-1 text-red-600 border-red-300 hover:bg-red-50"
+                className="flex-1 text-red-600 border-red-300 hover:bg-red-50 hover:scale-[1.02] transition-all duration-200"
               >
                 Reject Loan
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setShowRejectionModal(false)}
-                className="flex-1"
+                className="flex-1 hover:scale-[1.02] transition-transform duration-200"
               >
                 Cancel
               </Button>
             </div>
           </div>
         </Modal>
+        </div>
       </div>
     </Layout>
   );

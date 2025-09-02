@@ -1,15 +1,15 @@
 import { User as AppUser } from '@/types';
 import {
-    EmailAuthProvider,
-    User,
-    createUserWithEmailAndPassword,
-    onAuthStateChanged,
-    reauthenticateWithCredential,
-    sendPasswordResetEmail,
-    signInWithEmailAndPassword,
-    signOut,
-    updatePassword,
-    updateProfile,
+  EmailAuthProvider,
+  User,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  reauthenticateWithCredential,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+  updatePassword,
+  updateProfile,
 } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
@@ -97,7 +97,6 @@ class AuthService {
           phone: profile.profile?.phone || '',
           preferences: {
             language: 'en',
-            theme: 'light',
             notifications: {
               email: true,
               push: true,

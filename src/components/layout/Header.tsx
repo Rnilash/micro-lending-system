@@ -2,28 +2,23 @@ import { useAuthStore } from '@/store/auth';
 import { useUIStore } from '@/store/ui';
 import { Menu, Transition } from '@headlessui/react';
 import {
-    Bars3Icon,
-    BellIcon,
-    ChevronDownIcon,
-    GlobeAltIcon,
-    MagnifyingGlassIcon,
-    MoonIcon,
-    SunIcon,
+  Bars3Icon,
+  BellIcon,
+  ChevronDownIcon,
+  GlobeAltIcon,
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
-import { Fragment } from 'react';
 
 export default function Header() {
   const router = useRouter();
   const { user, signOut } = useAuthStore();
-  const { 
-    sidebarOpen, 
-    setSidebarOpen, 
-    language, 
+  const {
+    sidebarOpen,
+    setSidebarOpen,
+    language,
     setLanguage,
-    darkMode,
-    setDarkMode,
-    notifications 
+    notifications
   } = useUIStore();
 
   const handleSignOut = async () => {
@@ -82,19 +77,6 @@ export default function Header() {
             </span>
           </button>
 
-          {/* Dark mode toggle */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-            title={`Switch to ${darkMode ? 'light' : 'dark'} mode`}
-          >
-            {darkMode ? (
-              <SunIcon className="w-5 h-5" />
-            ) : (
-              <MoonIcon className="w-5 h-5" />
-            )}
-          </button>
-
           {/* Notifications */}
           <button
             className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 relative"
@@ -128,7 +110,6 @@ export default function Header() {
             </Menu.Button>
 
             <Transition
-              as={Fragment}
               enter="transition ease-out duration-100"
               enterFrom="transform opacity-0 scale-95"
               enterTo="transform opacity-100 scale-100"

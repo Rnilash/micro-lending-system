@@ -1,7 +1,6 @@
 import { Loading } from '@/components/ui/Loading';
 import { NotificationContainer } from '@/components/ui/Notification';
 import { useAuthStore } from '@/store/auth';
-import { useUIStore } from '@/store/ui';
 import { useRouter } from 'next/router';
 import { ReactNode, useEffect } from 'react';
 import Header from './Header';
@@ -17,7 +16,6 @@ interface LayoutProps {
 export default function Layout({ children, requireAuth = true }: LayoutProps) {
   const router = useRouter();
   const { user, loading, initialized } = useAuthStore();
-  const { darkMode } = useUIStore();
 
   useEffect(() => {
     if (requireAuth && initialized && !user) {
@@ -45,34 +43,30 @@ export default function Layout({ children, requireAuth = true }: LayoutProps) {
   
   if (isAuthPage || isLandingPage) {
     return (
-      <div className={darkMode ? 'dark' : ''}>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-          {children}
-          <NotificationContainer />
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        {children}
+        <NotificationContainer />
       </div>
     );
   }
 
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        {/* Sidebar */}
-        <Sidebar />
-        
-        {/* Main content area */}
-        <div className="lg:pl-64">
-          {/* Page content */}
-          <main>
-            {/* Header - at top of content */}
-            <Header />
-            {children}
-          </main>
-        </div>
-
-        {/* Global notifications */}
-        <NotificationContainer />
+    <div className="min-h-screen bg-gray-50">
+      {/* Sidebar */}
+      <Sidebar />
+      
+      {/* Main content area */}
+      <div className="lg:pl-64">
+        {/* Page content */}
+        <main>
+          {/* Header - at top of content */}
+          <Header />
+          {children}
+        </main>
       </div>
+
+      {/* Global notifications */}
+      <NotificationContainer />
     </div>
   );
 }
