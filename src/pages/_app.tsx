@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { AppProps } from 'next/app';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
+import useAuthInitialization from '@/hooks/useAuthInitialization';
 import '../styles/globals.css';
 
 // Create a client
@@ -30,11 +31,12 @@ function createQueryClient() {
   });
 }
 
-export default function App({ Component, pageProps }: AppProps) {
-  const [queryClient] = useState(() => createQueryClient());
+function AppContent({ Component, pageProps }: AppProps) {
+  // Initialize Firebase auth state
+  useAuthInitialization();
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <Component {...pageProps} />
       <Toaster 
         position="top-right"
@@ -63,6 +65,16 @@ export default function App({ Component, pageProps }: AppProps) {
       {process.env.NODE_ENV === 'development' && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}
+    </>
+  );
+}
+
+export default function App(props: AppProps) {
+  const [queryClient] = useState(() => createQueryClient());
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppContent {...props} />
     </QueryClientProvider>
   );
 }

@@ -79,7 +79,14 @@ export default function AdminDashboard() {
 
   return (
     <Layout title="Admin Dashboard" role="admin">
-      <div className="space-y-6">
+      <div className="p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          {/* Page Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <p className="text-gray-600">Welcome back! Here&apos;s what&apos;s happening with your micro-lending business.</p>
+          </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
@@ -158,6 +165,7 @@ export default function AdminDashboard() {
             </div>
           </div>
         </Card>
+        </div>
       </div>
     </Layout>
   );
