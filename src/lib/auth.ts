@@ -1,18 +1,18 @@
-import {
-  User,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  updateProfile,
-  sendPasswordResetEmail,
-  updatePassword,
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-} from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from './firebase';
 import { User as AppUser } from '@/types';
+import {
+    EmailAuthProvider,
+    User,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    reauthenticateWithCredential,
+    sendPasswordResetEmail,
+    signInWithEmailAndPassword,
+    signOut,
+    updatePassword,
+    updateProfile,
+} from 'firebase/auth';
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { auth, db } from './firebase';
 
 class AuthService {
   constructor() {
@@ -87,6 +87,7 @@ class AuthService {
       // Create user profile in Firestore
       const userProfile: AppUser = {
         uid: user.uid,
+        id: user.uid, // Add for compatibility
         email: user.email!,
         name: `${profile.profile?.firstName} ${profile.profile?.lastName}`,
         role: profile.role || 'agent',

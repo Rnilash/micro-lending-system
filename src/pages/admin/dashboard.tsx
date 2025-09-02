@@ -1,15 +1,15 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 import Layout from '@/components/layout/Layout';
 import { Card } from '@/components/ui/Card';
 import {
-  UsersIcon,
-  CurrencyDollarIcon,
-  CreditCardIcon,
-  ChartBarIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
+    ArrowTrendingDownIcon,
+    ArrowTrendingUpIcon,
+    ChartBarIcon,
+    CreditCardIcon,
+    CurrencyDollarIcon,
+    UsersIcon,
 } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -185,9 +185,9 @@ function StatCard({ stat }: { stat: any }) {
                 stat.changeType === 'positive' ? 'text-success-600' : 'text-danger-600'
               }`}>
                 {stat.changeType === 'positive' ? (
-                  <TrendingUpIcon className="self-center flex-shrink-0 h-4 w-4 text-success-500" />
+                  <ArrowTrendingUpIcon className="self-center flex-shrink-0 h-4 w-4 text-success-500" />
                 ) : (
-                  <TrendingDownIcon className="self-center flex-shrink-0 h-4 w-4 text-danger-500" />
+                  <ArrowTrendingDownIcon className="self-center flex-shrink-0 h-4 w-4 text-danger-500" />
                 )}
                 <span className="ml-1">{stat.change}</span>
               </div>

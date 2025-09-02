@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import toast from 'react-hot-toast';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import authService from '@/lib/auth';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { z } from 'zod';
 
 const forgotPasswordSchema = z.object({
   email: z.string().email('Invalid email address'),

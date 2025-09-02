@@ -1,10 +1,10 @@
 import Layout from '@/components/layout/Layout';
 import { Card } from '@/components/ui/Card';
 import {
-  UsersIcon,
-  CurrencyDollarIcon,
-  MapPinIcon,
-  ClockIcon,
+    ClockIcon,
+    CurrencyDollarIcon,
+    MapPinIcon,
+    UsersIcon,
 } from '@heroicons/react/24/outline';
 
 export default function AgentDashboard() {

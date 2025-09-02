@@ -2,9 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  experimental: {
-    appDir: false, // Using pages directory
-  },
   images: {
     domains: ['firebasestorage.googleapis.com'],
     formats: ['image/webp', 'image/avif'],
@@ -12,7 +9,7 @@ const nextConfig = {
   i18n: {
     locales: ['en', 'si'],
     defaultLocale: 'en',
-    localeDetection: true,
+    localeDetection: false,
   },
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,

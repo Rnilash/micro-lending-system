@@ -101,6 +101,44 @@ export function addDays(date: Date, days: number): Date {
 }
 
 /**
+ * Generate a unique receipt number
+ */
+export function generateReceiptNumber(prefix: string = 'RCP'): string {
+  const date = new Date();
+  const year = date.getFullYear().toString().slice(-2);
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+  
+  return `${prefix}${year}${month}${day}${random}`;
+}
+
+/**
+ * Generate a unique loan number
+ */
+export function generateLoanNumber(prefix: string = 'LN'): string {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const random = Math.floor(Math.random() * 99999).toString().padStart(5, '0');
+  
+  return `${prefix}${year}${month}${day}${random}`;
+}
+
+/**
+ * Generate a unique customer ID
+ */
+export function generateCustomerId(prefix: string = 'C'): string {
+  const date = new Date();
+  const year = date.getFullYear().toString().slice(-2);
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const random = Math.floor(Math.random() * 99999).toString().padStart(5, '0');
+  
+  return `${prefix}${year}${month}${random}`;
+}
+
+/**
  * Add weeks to a date
  */
 export function addWeeks(date: Date, weeks: number): Date {
@@ -178,6 +216,31 @@ export function formatPhone(phone: string): string {
   }
   
   return phone;
+}
+
+/**
+ * Format phone number for display
+ */
+export function formatPhoneNumber(phoneNumber: string): string {
+  // Remove all non-digits
+  const cleaned = phoneNumber.replace(/\D/g, '');
+  
+  // Sri Lankan phone number formatting
+  if (cleaned.startsWith('94')) {
+    // International format: +94 77 123 4567
+    const number = cleaned.substring(2);
+    if (number.length === 9) {
+      return `+94 ${number.substring(0, 2)} ${number.substring(2, 5)} ${number.substring(5)}`;
+    }
+  } else if (cleaned.startsWith('0')) {
+    // Local format: 077 123 4567
+    if (cleaned.length === 10) {
+      return `${cleaned.substring(0, 3)} ${cleaned.substring(3, 6)} ${cleaned.substring(6)}`;
+    }
+  }
+  
+  // Return original if formatting fails
+  return phoneNumber;
 }
 
 /**

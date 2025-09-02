@@ -1,9 +1,9 @@
-import '../styles/globals.css';
-import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import type { AppProps } from 'next/app';
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
+import '../styles/globals.css';
 
 // Create a client
 function createQueryClient() {
@@ -11,7 +11,7 @@ function createQueryClient() {
     defaultOptions: {
       queries: {
         staleTime: 5 * 60 * 1000, // 5 minutes
-        cacheTime: 10 * 60 * 1000, // 10 minutes
+        gcTime: 10 * 60 * 1000, // 10 minutes (renamed from cacheTime)
         refetchOnWindowFocus: false,
         retry: (failureCount, error) => {
           // Don't retry on 401/403 errors

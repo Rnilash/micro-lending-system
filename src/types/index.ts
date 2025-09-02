@@ -1,9 +1,17 @@
+// Export type aliases for compatibility
+export type UserRole = 'admin' | 'agent';
+export type CustomerStatus = 'active' | 'inactive' | 'suspended' | 'blacklisted';
+export type LoanStatus = 'pending' | 'approved' | 'active' | 'completed' | 'defaulted' | 'rejected';
+export type PaymentMethod = 'cash' | 'bank_transfer' | 'cheque' | 'digital' | 'mobile_money';
+export type PaymentStatus = 'completed' | 'pending' | 'failed' | 'cancelled';
+
 // Core entity types
 export interface User {
   uid: string;
+  id: string; // Add for compatibility
   email: string;
   name: string;
-  role: 'admin' | 'agent';
+  role: UserRole;
   profile: UserProfile;
   isActive: boolean;
   createdAt: Date;
@@ -18,6 +26,7 @@ export interface UserProfile {
   address?: Address;
   preferences: UserPreferences;
   permissions: Permission[];
+  role?: UserRole; // Add for compatibility
 }
 
 export interface UserPreferences {
@@ -43,12 +52,31 @@ export interface Permission {
 
 export interface Customer {
   id: string;
+  // Flattened properties for compatibility
+  firstName: string;
+  lastName: string;
+  nic: string;
+  nationalId: string; // Alias for nic
+  phone: string;
+  email?: string;
+  address: Address;
+  occupation: string;
+  monthlyIncome: number;
+  emergencyContact: EmergencyContact;
+  registrationDate: Date;
+  totalLoans: number;
+  activeLoans: number;
+  totalPaid: number;
+  outstandingAmount: number;
+  lastPaymentDate?: Date;
+  
+  // Original nested structure
   personalInfo: PersonalInfo;
   contactInfo: ContactInfo;
   kycInfo: KYCInfo;
   financialInfo: FinancialInfo;
   documents: Document[];
-  status: 'active' | 'inactive' | 'suspended';
+  status: CustomerStatus;
   kycStatus: 'pending' | 'approved' | 'rejected';
   assignedAgent: string; // User ID
   riskRating: 'low' | 'medium' | 'high';
@@ -83,6 +111,7 @@ export interface ContactInfo {
 export interface Address {
   line1: string;
   line2?: string;
+  street: string; // Add for compatibility
   city: string;
   district: string;
   province: string;
@@ -142,6 +171,21 @@ export interface Collateral {
 export interface Loan {
   id: string;
   customerId: string;
+  // Flattened properties for compatibility
+  loanNumber: string;
+  customerName: string;
+  customerPhone?: string;
+  customerAddress?: string;
+  principalAmount: number;
+  weeklyPayment: number;
+  termWeeks: number;
+  totalRepayment: number;
+  outstandingAmount: number;
+  remainingBalance: number;
+  paidAmount: number;
+  agentId?: string;
+  
+  // Original structure
   applicationDate: Date;
   amount: number;
   approvedAmount?: number;
@@ -151,7 +195,7 @@ export interface Loan {
   installmentAmount: number;
   totalAmount: number;
   purpose: string;
-  status: 'pending' | 'approved' | 'active' | 'completed' | 'defaulted' | 'rejected';
+  status: LoanStatus;
   approvalWorkflow: ApprovalStep[];
   disbursementDate?: Date;
   startDate?: Date;
@@ -197,6 +241,14 @@ export interface Payment {
   id: string;
   loanId: string;
   customerId: string;
+  // Flattened properties for compatibility
+  customerName?: string;
+  loanNumber?: string;
+  method: PaymentMethod;
+  receiptUrl?: string;
+  agentId?: string;
+  
+  // Original structure
   amount: number;
   installmentNumber: number;
   paymentDate: Date;
@@ -342,34 +394,33 @@ export interface PaginationMeta {
 
 // Query and Filter types
 export interface CustomerFilters {
-  status?: string;
-  kycStatus?: string;
-  assignedAgent?: string;
-  riskRating?: string;
+  status?: CustomerStatus;
+  agentId?: string;
+  district?: string;
   search?: string;
-  dateFrom?: Date;
-  dateTo?: Date;
+  limit?: number;
+  offset?: number;
 }
 
 export interface LoanFilters {
-  status?: string;
   customerId?: string;
-  managedBy?: string;
-  amountMin?: number;
-  amountMax?: number;
-  dateFrom?: Date;
-  dateTo?: Date;
-  overdue?: boolean;
+  status?: LoanStatus;
+  agentId?: string;
+  startDate?: Date;
+  endDate?: Date;
+  limit?: number;
+  offset?: number;
 }
 
 export interface PaymentFilters {
-  loanId?: string;
   customerId?: string;
-  collectedBy?: string;
-  paymentType?: string;
-  status?: string;
-  dateFrom?: Date;
-  dateTo?: Date;
+  loanId?: string;
+  startDate?: Date;
+  endDate?: Date;
+  paymentMethod?: PaymentMethod;
+  status?: PaymentStatus;
+  limit?: number;
+  offset?: number;
 }
 
 // UI State types
@@ -452,6 +503,29 @@ export interface ValidationError {
 
 export interface FormErrors {
   [key: string]: string | ValidationError[];
+}
+
+// Additional types for compatibility
+export interface LoanApplication {
+  customerId: string;
+  customerName: string;
+  amount: number;
+  purpose: string;
+  term: number;
+  interestRate: number;
+  collateral?: Collateral[];
+  guarantors?: Guarantor[];
+  agentId?: string;
+}
+
+export interface PaymentSchedule {
+  installmentNumber: number;
+  dueDate: Date;
+  amount: number;
+  status: 'pending' | 'paid' | 'overdue';
+  paidDate?: Date;
+  paidAmount?: number;
+  penaltyAmount?: number;
 }
 
 export default {};

@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export default function HomePage() {
   const router = useRouter();
